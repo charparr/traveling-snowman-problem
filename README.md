@@ -1,6 +1,6 @@
 # The Traveling Snowman Problem
 
-![snow_road](../figs/akp_snow_road.JPG)
+![snow_road](figs/akp_snow_road.JPG)
 
 ## How to most efficiently navigate a snowy landscape while minimizing travel over thin snowcover?
 
@@ -9,7 +9,7 @@ In this example we will use a synthetic snow-covered world overlain by a regular
 ## Approach
 ### Construct a synthetic snow depth map and some nodes to be visited
 
-![synthetic_snow](../figs/synthetic_normal_with_nodes.png)
+![synthetic_snow](figs/synthetic_normal_with_nodes.png)
 
 #### Compute a cost surface derived from the snow map
 - Greater snow depths correlate with cheaper travel.
@@ -24,26 +24,26 @@ In this simple example we invert the snow depth map and apply a 0.30 m threshold
 
 ##### Snow depths below the threshold are colored brown
 
-![synthetic_mask](../figs/synthetic_normal_masked_with_nodes.png)
+![synthetic_mask](figs/synthetic_normal_masked_with_nodes.png)
 
 ##### 10X cost locations (i.e. snow depth < threshold) are colored brown.
 
-![cost_surface](../figs/cost_surface_with_nodes.png)
+![cost_surface](figs/cost_surface_with_nodes.png)
 
 #### Compute least cost paths (LCPs) for each node to all other nodes
 Computation of the LCPs is akin to generating a distance matrix. However, the distance is defined by the cost to get from one node to another along the cost surface, rather than the actual geographic distance. The cost from one node to another is the sum of the costs along the path. The LCPs are stored in a dictionary data structure (basically a key-value look-up table) where each key is a node that stores the LCPs to all other nodes. Diagonal movements are allowed.
 
 ##### Node 1 (Origin)
 
-![node1](../figs/n1_lcps.png)
+![node1](figs/n1_lcps.png)
 
 ##### All Nodes and All LCPs
 
-![allnodes](../figs/all_nodes_all_lcps.png)
+![allnodes](figs/all_nodes_all_lcps.png)
 
 ##### LCP Matrix
 
-![lcp_matrix](../figs/distance_lcp_matrix.png)
+![lcp_matrix](figs/distance_lcp_matrix.png)
 
 #### Implement a traveling salesman problem (TSP) algorithm
 
@@ -55,9 +55,9 @@ In this instance 10 million different tours are created by simply swapping the v
 
 ## Results
 
-![tsp_solution](../figs/tsp_solution.png)
+![tsp_solution](figs/tsp_solution.png)
 
-![tsp_solution](../figs/tsp_solution_over_snow_thresh.png)
+![tsp_solution](figs/tsp_solution_over_snow_thresh.png)
 
 ## Next
 - Implement a Genetic Algorithm
