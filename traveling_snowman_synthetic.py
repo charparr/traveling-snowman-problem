@@ -116,7 +116,7 @@ def get_all_lcps_all_nodes(node_dict, grid_x, grid_y):
     return all_lcps
 
 
-def init_distance_matrix(node_dict):
+def init_distance_matrix(node_dict, node_names):
     # insert the zero distance for the lcp for each node to itself
     # that will be the diagonal of our distance matrix
     for k in node_dict:
@@ -156,7 +156,7 @@ def init_tsp_tour(nodes):
     return cities, tour
 
 
-def compute_tour_distance(tour_order):
+def compute_tour_distance(tour_order, df):
 
     hops = []
     i = 0
@@ -171,13 +171,13 @@ def compute_tour_distance(tour_order):
     return tour_distance.round(3)
 
 
-def solve_tsp(cities, tour, n_sims=100000):
+def solve_tsp(cities, tour, df, n_sims=100000):
     for temp in np.logspace(0, 5, n_sims)[::-1]:
         [i, j] = sorted(random.sample(range(1, len(cities)), 2))
         new_tour = tour[:i] + tour[j:j + 1] + \
             tour[i + 1:j] + tour[i:i + 1] + tour[j + 1:]
-        old_distances = compute_tour_distance(tour)
-        new_distances = compute_tour_distance(new_tour)
+        old_distances = compute_tour_distance(tour, df)
+        new_distances = compute_tour_distance(new_tour, df)
         if math.exp((old_distances - new_distances) / temp) > random.random():
             tour = copy.copy(new_tour)
     return tour
@@ -214,8 +214,10 @@ def get_tsp_route(tour, node_names, grid_x, grid_y, node_dict):
 ############################
 
 
-def plot_snow_and_nodes():
+def plot_snow_and_nodes(snow, nodes, origin):
     cmap = plt.cm.Blues
+    mu = snow.mean()
+    sigma = snow.std()
     textstr = 'Snow Depth: ' + '$\mu=%.2f,  \sigma$=%.2f' % (mu, sigma)
     plt.figure(figsize=(8, 8))
     plt.title(textstr)
@@ -229,7 +231,9 @@ def plot_snow_and_nodes():
     plt.legend()
 
 
-def plot_snow_thresh_and_nodes():
+def plot_snow_thresh_and_nodes(snow, nodes, origin):
+    mu = snow.mean()
+    sigma = snow.std()
     cmap = plt.cm.Blues
     cmap.set_under('sienna')
     textstr = 'Snow Depth: ' + \
@@ -297,7 +301,7 @@ def plot_distance_matrix():
     ax.set_title('Distance (Cost of LCP) Matrix Between All Nodes')
 
 
-def plot_tsp_route():
+def plot_tsp_route(tsp_route, nodes, tsp_hop_costs, origin):
     fig, axes = plt.subplots(1, 2, figsize=(16, 10))
     ax1 = axes[0]
     cmap = plt.cm.Reds
@@ -323,12 +327,13 @@ def plot_tsp_route():
     ax2.set_title('TSP Cumulative Cost')
 
 
-def plot_tsp_on_snow_thresh():
+def plot_tsp_on_snow_thresh(tsp_route, snow_threshed, snow, nodes, origin):
     cmap = plt.cm.Blues
     cmap.set_under('sienna')
-
+    mu = snow.mean()
+    sigma = snow.std()
     textstr = 'Snow Depth: ' + \
-        '$\mu=%.2f,  \sigma$=%.2f, threshold=%.2f' % (mu, sigma, thresh)
+        '$\mu=%.2f,  \sigma$=%.2f, threshold=%.2f' % (mu, sigma, 0.3)
     plt.figure(figsize=(8, 8))
     plt.title(textstr)
 
@@ -371,7 +376,7 @@ if __name__ == '__main__':
     node_dict, df = init_distance_matrix(node_dict)
     df = fill_distance_matrix(node_dict, node_names, df)
     cities, tour = init_tsp_tour(nodes)
-    tour = solve_tsp(cities, tour, 100000)
+    tour = solve_tsp(cities, tour, df, 100000)
     total_cost, tsp_route, tsp_hop_costs = get_tsp_route(tour, node_names,
                                                          grid_x, grid_y,
                                                          node_dict)
@@ -387,9 +392,9 @@ if __name__ == '__main__':
     plot_node_lcps('n1')
     plt.savefig('figs/n1_lcps.png',
                 bbox_inches='tight', dpi=300)
-    plot_tsp_route()
+    plot_tsp_route(tsp_route, nodes, tsp_hop_costs, origin)
     plt.savefig('figs/tsp_solution.png',
                 bbox_inches='tight', dpi=300)
-    plot_tsp_on_snow_thresh()
+    plot_tsp_on_snow_thresh(tsp_route, snow_threshed, snow, nodes, origin)
     plt.savefig('figs/tsp_solution_over_snow_thresh.png',
                 bbox_inches='tight', dpi=300)
