@@ -46,7 +46,7 @@ In this instance 10 million different tours are created by simply swapping the v
 ![tsp_solution2](figs/tsp_solution_over_snow_thresh.png)
 
 ## With a Real Snow Depth Map!
-Results from a subset of Camden Bay in the Arcti National Wildlife Refuge
+Results from a subset of Camden Bay in the Arctic National Wildlife Refuge
 
 ![snow](figs/snow_with_nodes.png)
 
